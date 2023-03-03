@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeMenuBtn"
+        android:icon="@drawable/round_home_24"
+        android:title="@string/home" />
+    <item
+        android:id="@+id/sectionsMenuBtn"
+        android:icon="@drawable/round_place_24"
+        android:title="@string/sections" />
+    <item
+        android:id="@+id/addMenuBtn"
+        android:title="@string/add"
+        android:enabled="false"/>
+    <item
+        android:id="@+id/favoriteMenuBtn"
+        android:icon="@drawable/round_favorite_24"
+        android:title="@string/favorites" />
+    <item
+        android:id="@+id/depositMenuBtn"
+        android:icon="@drawable/baseline_warehouse_24"
+        android:title="@string/deposits" />
+</menu>
