@@ -13,4 +13,10 @@
     <string name="box_color">Box Color</string>
     <string name="price">Price</string>
     <string name="search">Search</string>
+    <string name="product">Product</string>
+    <string name="add_deposit">Add deposit</string>
+    <string name="name">Name</string>
+    <string name="enter_deposit_name">Enter deposit name</string>
+    <string name="add_section">Add section</string>
+    <string name="select_deposit">Select a deposit</string>
 </resources>

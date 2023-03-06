@@ -1,7 +1,9 @@
 package com.example.winrah.models;
 
 
-public class Product extends  Model{
+import com.orm.SugarRecord;
+
+public class Product extends SugarRecord {
 
     private String reference, price, boxColor;
     private Section section;

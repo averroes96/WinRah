@@ -3,25 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".models.CustomSugarApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_app"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
+        tools:replace="android:icon"
         tools:targetApi="31">
         <activity
             android:name=".activities.SplashActivity"
-            android:exported="false" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.MainActivity"
             android:exported="false" />
 
-        <meta-data android:name="DATABASE" android:value="winrah.db" />
+        <meta-data android:name="DATABASE" android:value="app.db" />
         <meta-data android:name="VERSION" android:value="1" />
         <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.averroes" />
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.example.winrah.models" />
     </application>
 
 </manifest>

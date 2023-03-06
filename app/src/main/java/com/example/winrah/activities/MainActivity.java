@@ -1,19 +1,32 @@
 package com.example.winrah.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.winrah.R;
 import com.example.winrah.databinding.ActivityMainBinding;
+import com.example.winrah.databinding.LayoutAddBinding;
+import com.example.winrah.databinding.LayoutAddDepositBinding;
+import com.example.winrah.databinding.LayoutAddSectionBinding;
 import com.example.winrah.fragments.DepositFragment;
 import com.example.winrah.fragments.FavoriteFragment;
 import com.example.winrah.fragments.HomeFragment;
 import com.example.winrah.fragments.SectionFragment;
+import com.example.winrah.models.Deposit;
+import com.example.winrah.models.Product;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationBarView;
+import com.orm.SugarDb;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,36 +37,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(R.layout.activity_main);
+        setContentView(binding.getRoot());
 
-        binding.bottomNV.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        SugarDb db = new SugarDb(this);
+        db.onCreate(db.getDB());
+
+        binding.bottomNV.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemID = item.getItemId();
 
-                switch (itemID) {
-                    case R.id.homeMenuBtn:
-                        showHomeFragment();
-                        return true;
-                    case R.id.depositMenuBtn:
-                        showDepositFragment();
-                        return true;
-                    case R.id.favoriteMenuBtn:
-                        showFavoriteFragment();
-                        return true;
-                    case R.id.sectionsMenuBtn:
-                        showSectionFragment();
-                        return true;
-                    case R.id.addMenuBtn:
-                        showAddFragment();
-                        return true;
-
-                    default: return false;
+                if(itemID == R.id.homeMenuBtn) {
+                    showHomeFragment();
+                    return true;
+                } else if (itemID == R.id.depositMenuBtn) {
+                    showDepositFragment();
+                    return true;
                 }
-            }
-
-            private void showAddFragment() {
-                binding.toolbarTV.setText(R.string.add);
+                else if (itemID == R.id.favoriteMenuBtn) {
+                    showFavoriteFragment();
+                    return true;
+                }
+                else if (itemID == R.id.sectionsMenuBtn) {
+                    showSectionFragment();
+                    return true;
+                }
+                else if (itemID == R.id.addMenuBtn) {
+                    showAddOptions();
+                    return true;
+                }
+                else return false;
             }
 
             private void showSectionFragment() {
@@ -92,5 +105,58 @@ public class MainActivity extends AppCompatActivity {
                 fragmentTransaction.commit();
             }
         });
+
+        binding.addBtn.setOnClickListener(view -> {
+            showAddOptions();
+        });
+
+    }
+
+    private void showAddOptions() {
+        final BottomSheetDialog dialog = new BottomSheetDialog(MainActivity.this);
+        LayoutAddBinding addBinding = LayoutAddBinding.inflate(LayoutInflater.from(this), binding.getRoot(), false);
+
+        dialog.setContentView(addBinding.getRoot());
+        dialog.show();
+
+        addBinding.addDepositBtn.setOnClickListener(view -> {
+            final BottomSheetDialog depositDialog = new BottomSheetDialog(MainActivity.this);
+            LayoutAddDepositBinding addDepositBinding = LayoutAddDepositBinding.inflate(LayoutInflater.from(this), binding.getRoot(), false);
+
+            depositDialog.setContentView(addDepositBinding.getRoot());
+            depositDialog.show();
+
+            addDepositBinding.addBtn.setOnClickListener(depositView -> {
+                Deposit deposit = new Deposit();
+                deposit.setName(addDepositBinding.nameET.getText().toString());
+                if (!deposit.validate()) {
+                    Toast.makeText(this, R.string.enter_deposit_name, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                deposit.save();
+            });
+        });
+
+        addBinding.addSectionBtn.setOnClickListener(view -> {
+            final BottomSheetDialog sectionDialog = new BottomSheetDialog(MainActivity.this);
+            LayoutAddSectionBinding addSectionBinding = LayoutAddSectionBinding.inflate(LayoutInflater.from(this), binding.getRoot(), false);
+
+            sectionDialog.setContentView(addSectionBinding.getRoot());
+            sectionDialog.show();
+
+            addSectionBinding.depositTV.setOnClickListener(view1 -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                CharSequence[] names = Deposit.getAllDepositNames();
+                builder.setTitle(getString(R.string.select_deposit))
+                        .setItems(names, (dialogInterface, i) -> {
+                            addSectionBinding.depositTV.setText(names[i]);
+                        })
+                        .create().show();
+            });
+            addSectionBinding.addBtn.setOnClickListener(depositView -> {});
+        });
+    }
+
+    private void selectDepositDialog() {
     }
 }

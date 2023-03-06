@@ -1,15 +1,15 @@
 package com.example.winrah.models;
 
 
+import java.util.List;
+
 public class Deposit extends Model {
+
     private String name;
 
-    public Deposit(String name) {
-        this.name = name;
-    }
+    public Deposit() {}
 
-    public Deposit(long id, String name) {
-        this.id = id;
+    public Deposit(String name) {
         this.name = name;
     }
 
@@ -21,10 +21,21 @@ public class Deposit extends Model {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "Deposit{" +
-                "name='" + name + '\'' +
-                '}';
+    public boolean validate() {
+        if (this.getName().trim().isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
+
+    public static CharSequence[] getAllDepositNames() {
+        List<Deposit> allDeposits = Deposit.listAll(Deposit.class);
+        CharSequence[] depositNames = new CharSequence[allDeposits.size()];
+        for (int i = 0; i < allDeposits.size(); i++) {
+            depositNames[i] = allDeposits.get(i).getName();
+        }
+        return depositNames;
+    }
+
 }
