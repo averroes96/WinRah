@@ -6,6 +6,10 @@ public class Section extends Model {
 
     private Deposit deposit;
 
+    public Section() {
+
+    }
+
 
     public Section(String name, Deposit deposit) {
         this.name = name;
@@ -26,5 +30,9 @@ public class Section extends Model {
 
     public void setDeposit(Deposit deposit) {
         this.deposit = deposit;
+    }
+
+    public boolean validate() {
+        return !this.getName().trim().isEmpty();
     }
 }

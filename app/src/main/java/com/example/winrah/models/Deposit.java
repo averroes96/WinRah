@@ -22,11 +22,17 @@ public class Deposit extends Model {
     }
 
     public boolean validate() {
-        if (this.getName().trim().isEmpty()) {
-            return false;
-        }
+        return !this.getName().trim().isEmpty();
+    }
 
-        return true;
+    public CharSequence[] sectionNames() {
+        List<Section> sections = Section.find(Section.class, "deposit = ?", String.valueOf(this.getId()));
+        CharSequence[] names = new CharSequence[sections.size()];
+
+        for (int i = 0; i < sections.size(); i++) {
+            names[i] = sections.get(i).getName();
+        }
+        return names;
     }
 
     public static CharSequence[] getAllDepositNames() {

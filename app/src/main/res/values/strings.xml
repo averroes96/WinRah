@@ -19,4 +19,11 @@
     <string name="enter_deposit_name">Enter deposit name</string>
     <string name="add_section">Add section</string>
     <string name="select_deposit">Select a deposit</string>
+    <string name="enter_section_name">Enter section name</string>
+    <string name="add_product">Add product</string>
+    <string name="section_created">Section was successfully created</string>
+    <string name="deposit_created">Deposit was successfully created</string>
+    <string name="select_section">Select a section</string>
+    <string name="product_cannot_be_created">Reference and Section cannot be empty</string>
+    <string name="product_created">Product was successfully created.</string>
 </resources>

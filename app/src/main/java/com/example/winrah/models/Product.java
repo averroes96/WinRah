@@ -8,6 +8,8 @@ public class Product extends SugarRecord {
     private String reference, price, boxColor;
     private Section section;
 
+    public Product() {}
+
     public Product(String reference, Section section) {
         this.reference = reference;
         this.section = section;
@@ -51,5 +53,14 @@ public class Product extends SugarRecord {
 
     public void setSection(Section section) {
         this.section = section;
+    }
+
+    public boolean validate() {
+        if (this.getReference().trim().isEmpty())
+            return false;
+        if(this.getSection() == null)
+            return false;
+
+        return true;
     }
 }

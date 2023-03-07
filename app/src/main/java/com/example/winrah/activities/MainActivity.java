@@ -16,6 +16,7 @@ import com.example.winrah.R;
 import com.example.winrah.databinding.ActivityMainBinding;
 import com.example.winrah.databinding.LayoutAddBinding;
 import com.example.winrah.databinding.LayoutAddDepositBinding;
+import com.example.winrah.databinding.LayoutAddProductBinding;
 import com.example.winrah.databinding.LayoutAddSectionBinding;
 import com.example.winrah.fragments.DepositFragment;
 import com.example.winrah.fragments.FavoriteFragment;
@@ -23,6 +24,7 @@ import com.example.winrah.fragments.HomeFragment;
 import com.example.winrah.fragments.SectionFragment;
 import com.example.winrah.models.Deposit;
 import com.example.winrah.models.Product;
+import com.example.winrah.models.Section;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationBarView;
@@ -133,7 +135,9 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.enter_deposit_name, Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 deposit.save();
+                Toast.makeText(this, R.string.deposit_created, Toast.LENGTH_SHORT).show();
             });
         });
 
@@ -153,10 +157,92 @@ public class MainActivity extends AppCompatActivity {
                         })
                         .create().show();
             });
-            addSectionBinding.addBtn.setOnClickListener(depositView -> {});
+
+            addSectionBinding.addBtn.setOnClickListener(depositView -> {
+                if (addSectionBinding.depositTV.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(this, R.string.select_deposit, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String depositName = addSectionBinding.depositTV.getText().toString();
+                String sectionName = addSectionBinding.nameET.getText().toString().trim(); // cannot be null
+                Deposit deposit = Deposit.find(Deposit.class, "name = ?", depositName).get(0);
+
+                Section section = new Section();
+                section.setName(sectionName);
+                section.setDeposit(deposit);
+
+                if (!section.validate()) {
+                    Toast.makeText(this, R.string.enter_section_name, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                section.save();
+                Toast.makeText(this, R.string.section_created, Toast.LENGTH_SHORT).show();
+            });
+        });
+
+        addBinding.addProductBtn.setOnClickListener(view -> {
+            final BottomSheetDialog productDialog = new BottomSheetDialog(MainActivity.this);
+            LayoutAddProductBinding addProductBinding = LayoutAddProductBinding.inflate(LayoutInflater.from(this), binding.getRoot(), false);
+
+            productDialog.setContentView(addProductBinding.getRoot());
+            productDialog.show();
+
+            addProductBinding.depositTV.setOnClickListener(view1 -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                CharSequence[] names = Deposit.getAllDepositNames();
+                builder.setTitle(getString(R.string.select_deposit))
+                        .setItems(names, (dialogInterface, i) -> {
+                            addProductBinding.depositTV.setText(names[i]);
+                            Deposit deposit = Deposit.find(Deposit.class, "name = ?", names[i].toString()).get(0);
+
+                            addProductBinding.sectionTV.setText("");
+                            addProductBinding.sectionTV.setOnClickListener(view2 -> {
+                                AlertDialog.Builder sectionBuilder = new AlertDialog.Builder(this);
+                                CharSequence[] sectionNames = deposit.sectionNames();
+
+                                sectionBuilder.setTitle(getString(R.string.select_section))
+                                        .setItems(sectionNames, (dialogInterface1, i1) -> {
+                                            addProductBinding.sectionTV.setText(sectionNames[i1]);
+                                        })
+                                        .create().show();
+                            });
+                        })
+                        .create().show();
+            });
+
+            addProductBinding.addBtn.setOnClickListener(view1 -> {
+                Product product = new Product();
+                product.setReference(addProductBinding.referenceET.getText().toString().trim());
+                product.setPrice(addProductBinding.priceET.getText().toString().trim());
+                product.setBoxColor(addProductBinding.boxColorET.getText().toString().trim());
+
+                String sectionName = addProductBinding.sectionTV.getText().toString().trim();
+                String depositName = addProductBinding.depositTV.getText().toString().trim();
+
+                if (sectionName.isEmpty()) {
+                    Toast.makeText(this, R.string.select_section, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Deposit deposit = Deposit.find(Deposit.class, "name = ?", depositName).get(0);
+                Section section = Section.find(
+                        Section.class,
+                        "name = ? AND deposit = ?",
+                        sectionName, String.valueOf(deposit.getId())
+                ).get(0);
+                product.setSection(section);
+
+                if (!product.validate()) {
+                    Toast.makeText(this, R.string.product_cannot_be_created, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                product.save();
+                Toast.makeText(this, R.string.product_created, Toast.LENGTH_SHORT).show();
+            });
         });
     }
 
-    private void selectDepositDialog() {
-    }
 }
